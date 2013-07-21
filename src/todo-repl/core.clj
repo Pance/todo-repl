@@ -1,4 +1,5 @@
-(ns todo-repl.core)
+(ns todo-repl.core
+	(:import (org.ocpsoft.prettytime.nlp PrettyTimeParser)))
 
 (defn new-task [name due-by due-after context url]
   {:name name
@@ -15,7 +16,7 @@
 												due-after nil
                         context nil
 												url [{:label "" :url ""}] }}]
-  (new-task name due-after due-by context url))
+  (new-task name (nl-to-date due-by) (nl-to-date due-after) context url))
 
 (defn add-new-task-to [new-task tasks]
 	(cons (new-task-better new-task) tasks))
@@ -25,3 +26,9 @@
 
 (defn complete-task [& xs]
 	(map #(assoc % :status :complete)) xs)
+
+(defn nl-to-date [nl]
+	(..
+		(new PrettyTimeParser)
+		(parse nl)
+		(get 0)))
